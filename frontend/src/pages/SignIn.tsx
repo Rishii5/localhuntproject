@@ -35,7 +35,10 @@ const SignIn = () => {
         // Store token in localStorage
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
-        navigate("/");
+        // Navigate to dashboard based on role
+        const dashboardPath = data.user.role === 'vendor' ? '/vendor-dashboard' :
+                             data.user.role === 'admin' ? '/admin-dashboard' : '/customer-dashboard';
+        navigate(dashboardPath);
       } else {
         setError(data.message || "Invalid email or password");
       }

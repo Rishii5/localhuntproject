@@ -1,13 +1,23 @@
-import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { Search, Menu, X, MapPin, Phone, User } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Search, Menu, X, MapPin, Phone, User, LogOut, LayoutDashboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userRole, setUserRole] = useState<string | null>(null);
   const location = useLocation();
+  const navigate = useNavigate();
 
   const navItems = [
     { label: "Home", path: "/" },
@@ -17,6 +27,44 @@ export const Navbar = () => {
   ];
 
   const isActive = (path: string) => location.pathname === path;
+
+  useEffect(() => {
+    // Check authentication status from localStorage
+    const token = localStorage.getItem('token');
+    const user = localStorage.getItem('user');
+    if (user) {
+      try {
+        const userData = JSON.parse(user);
+        setUserRole(userData.role);
+      } catch (e) {
+        console.error('Error parsing user data:', e);
+      }
+    }
+    setIsAuthenticated(!!token);
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userRole');
+    setIsAuthenticated(false);
+    setUserRole(null);
+    navigate('/');
+  };
+
+  const getDashboardPath = () => {
+    switch (userRole) {
+      case 'vendor':
+        return '/vendor-dashboard';
+      case 'admin':
+        return '/admin-dashboard';
+      default:
+        return '/customer-dashboard';
+    }
+  };
+
+  const handleDashboardClick = () => {
+    navigate(getDashboardPath());
+  };
 
   return (
     <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-card-border shadow-sm">
@@ -61,16 +109,40 @@ export const Navbar = () => {
 
           {/* Action Buttons */}
           <div className="hidden md:flex items-center space-x-3">
-            <Button variant="ghost" size="sm" className="text-muted-foreground">
-              <Phone className="w-4 h-4 mr-2" />
-              List Business
-            </Button>
-            <Link to="/signin">
-              <Button variant="outline" size="sm">
-                <User className="w-4 h-4 mr-2" />
-                Sign In
-              </Button>
-            </Link>
+            {isAuthenticated ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm">
+                    <User className="w-4 h-4 mr-2" />
+                    Account
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem onClick={() => navigate(getDashboardPath())}>
+                    <LayoutDashboard className="w-4 h-4 mr-2" />
+                    Dashboard
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleLogout}>
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <>
+                <Button variant="ghost" size="sm" className="text-muted-foreground">
+                  <Phone className="w-4 h-4 mr-2" />
+                  List Business
+                </Button>
+                <Link to="/signin">
+                  <Button variant="outline" size="sm">
+                    <User className="w-4 h-4 mr-2" />
+                    Sign In
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -117,16 +189,47 @@ export const Navbar = () => {
                 </Link>
               ))}
               <div className="pt-3 border-t border-card-border">
-                <Button variant="ghost" size="sm" className="justify-start w-full mb-2">
-                  <Phone className="w-4 h-4 mr-2" />
-                  List Your Business
-                </Button>
-                <Link to="/signin" onClick={() => setIsMenuOpen(false)}>
-                  <Button variant="outline" size="sm" className="justify-start w-full">
-                    <User className="w-4 h-4 mr-2" />
-                    Sign In
-                  </Button>
-                </Link>
+                {isAuthenticated ? (
+                  <>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="justify-start w-full mb-2"
+                      onClick={() => {
+                        navigate(getDashboardPath());
+                        setIsMenuOpen(false);
+                      }}
+                    >
+                      <LayoutDashboard className="w-4 h-4 mr-2" />
+                      Dashboard
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="justify-start w-full mb-2"
+                      onClick={() => {
+                        handleLogout();
+                        setIsMenuOpen(false);
+                      }}
+                    >
+                      <LogOut className="w-4 h-4 mr-2" />
+                      Logout
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button variant="ghost" size="sm" className="justify-start w-full mb-2">
+                      <Phone className="w-4 h-4 mr-2" />
+                      List Your Business
+                    </Button>
+                    <Link to="/signin" onClick={() => setIsMenuOpen(false)}>
+                      <Button variant="outline" size="sm" className="justify-start w-full">
+                        <User className="w-4 h-4 mr-2" />
+                        Sign In
+                      </Button>
+                    </Link>
+                  </>
+                )}
               </div>
             </div>
           </div>
