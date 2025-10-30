@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Search, Menu, X, MapPin, Phone, User, LogOut, LayoutDashboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,7 +13,7 @@ import {
 
 export const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
+
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userRole, setUserRole] = useState<string | null>(null);
   const location = useLocation();
@@ -95,40 +95,42 @@ export const Navbar = () => {
             ))}
           </div>
 
-          {/* Search Bar (Desktop) */}
-          <div className="hidden lg:flex items-center bg-background-alt rounded-xl px-4 py-2 w-80">
-            <Search className="w-4 h-4 text-muted-foreground mr-3" />
-            <Input
-              type="text"
-              placeholder="Search businesses..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="border-0 bg-transparent focus:ring-0 focus:border-0 p-0"
-            />
-          </div>
+
 
           {/* Action Buttons */}
           <div className="hidden md:flex items-center space-x-3">
             {isAuthenticated ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm">
-                    <User className="w-4 h-4 mr-2" />
-                    Account
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
-                  <DropdownMenuItem onClick={() => navigate(getDashboardPath())}>
+              <>
+                {userRole === 'vendor' && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => navigate('/vendor-dashboard')}
+                  >
                     <LayoutDashboard className="w-4 h-4 mr-2" />
-                    Dashboard
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleLogout}>
-                    <LogOut className="w-4 h-4 mr-2" />
-                    Logout
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                    Vendor Dashboard
+                  </Button>
+                )}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="sm">
+                      <User className="w-4 h-4 mr-2" />
+                      Account
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-48">
+                    <DropdownMenuItem onClick={() => navigate(getDashboardPath())}>
+                      <LayoutDashboard className="w-4 h-4 mr-2" />
+                      Dashboard
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleLogout}>
+                      <LogOut className="w-4 h-4 mr-2" />
+                      Logout
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </>
             ) : (
               <>
                 <Button variant="ghost" size="sm" className="text-muted-foreground">
@@ -156,19 +158,7 @@ export const Navbar = () => {
           </Button>
         </div>
 
-        {/* Mobile Search Bar */}
-        <div className="lg:hidden pb-4">
-          <div className="flex items-center bg-background-alt rounded-xl px-4 py-3">
-            <Search className="w-4 h-4 text-muted-foreground mr-3" />
-            <Input
-              type="text"
-              placeholder="Search businesses..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="border-0 bg-transparent focus:ring-0 focus:border-0 p-0"
-            />
-          </div>
-        </div>
+
 
         {/* Mobile Menu */}
         {isMenuOpen && (
@@ -191,6 +181,20 @@ export const Navbar = () => {
               <div className="pt-3 border-t border-card-border">
                 {isAuthenticated ? (
                   <>
+                    {userRole === 'vendor' && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="justify-start w-full mb-2"
+                        onClick={() => {
+                          navigate('/vendor-dashboard');
+                          setIsMenuOpen(false);
+                        }}
+                      >
+                        <LayoutDashboard className="w-4 h-4 mr-2" />
+                        Vendor Dashboard
+                      </Button>
+                    )}
                     <Button
                       variant="ghost"
                       size="sm"

@@ -1,7 +1,6 @@
 import { Navbar } from "@/components/Navbar";
 import { HeroSection } from "@/components/HeroSection";
 import { CategoryGrid } from "@/components/CategoryGrid";
-import { FeaturedBusinesses } from "@/components/FeaturedBusinesses";
 import { Footer } from "@/components/Footer";
 
 const Index = () => {
@@ -10,7 +9,6 @@ const Index = () => {
       <Navbar />
       <HeroSection />
       <CategoryGrid />
-      <FeaturedBusinesses />
       <Footer />
     </div>
   );

@@ -91,11 +91,29 @@ export const HeroSection = () => {
                   variant="outline"
                   size="sm"
                   className="rounded-full hover:bg-primary hover:text-primary-foreground transition-all duration-200"
+                  onClick={() => {
+                    const params = new URLSearchParams();
+                    params.set("q", search);
+                    navigate(`/search?${params.toString()}`);
+                  }}
                 >
                   {search}
                 </Button>
               ))}
             </div>
+          </div>
+
+          {/* Vendor Dashboard Demo */}
+          <div className="mb-12 animate-fade-in-up stagger-3">
+            <p className="text-muted-foreground mb-4">Try our vendor dashboard:</p>
+            <Button
+              variant="outline"
+              className="rounded-full hover:bg-secondary hover:text-secondary-foreground transition-all duration-200"
+              onClick={() => navigate('/vendor-dashboard')}
+            >
+              <Building className="w-4 h-4 mr-2" />
+              Vendor Dashboard Demo
+            </Button>
           </div>
 
           {/* Stats */}

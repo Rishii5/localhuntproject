@@ -74,6 +74,12 @@ console.log('✅ Chat route mounted at /api/chat');
 app.use('/api/dashboard', require('./routes/dashboard')); // 🆕 mount dashboard
 console.log('✅ Dashboard route mounted at /api/dashboard');
 
+app.use('/api/services', require('./routes/services')); // 🆕 mount services
+console.log('✅ Services route mounted at /api/services');
+
+app.use('/api/reviews', require('./routes/reviews')); // 🆕 mount reviews
+console.log('✅ Reviews route mounted at /api/reviews');
+
 // ======================
 // 🔧 404 Handler
 // ======================

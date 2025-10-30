@@ -1,9 +1,6 @@
-- [x] Update ChatModal.tsx to display a preloaded message when no messages exist, indicating vendor unavailability.
-- [ ] Add carousel for displaying images in BusinessDetail.tsx
-  - [ ] Add state management for current image index
-  - [ ] Replace horizontal scroll with carousel container
-  - [ ] Add previous/next navigation buttons
-  - [ ] Add dot indicators for direct navigation
-  - [ ] Implement responsive design (1 image on mobile, multiple on larger screens)
-  - [ ] Add smooth transitions between images
-  - [ ] Ensure proper image loading and accessibility
+# TODO: Remove Search Option from Navbar
+
+- [x] Remove searchQuery state variable from Navbar.tsx
+- [x] Remove desktop search bar div from Navbar.tsx
+- [x] Remove mobile search bar div from Navbar.tsx
+- [x] Remove unused Input import from Navbar.tsx

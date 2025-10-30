@@ -15,6 +15,7 @@ import NearMe from "./pages/NearMe";
 import TopRated from "./pages/TopRated";
 import CustomerDashboard from "./pages/CustomerDashboard";
 import VendorDashboard from "./pages/VendorDashboard";
+import VendorDashboardPublic from "./pages/VendorDashboardPublic";
 import AdminDashboard from "./pages/AdminDashboard";
 
 const queryClient = new QueryClient();
@@ -38,6 +39,8 @@ const App = () => (
           <Route path="/dashboard" element={<CustomerDashboard />} />
           <Route path="/customer-dashboard" element={<CustomerDashboard />} />
           <Route path="/vendor-dashboard" element={<VendorDashboard />} />
+          <Route path="/vendor-dashboard-demo" element={<VendorDashboard isDemo={true} />} />
+          <Route path="/vendor-dashboard-public" element={<VendorDashboardPublic />} />
           <Route path="/admin-dashboard" element={<AdminDashboard />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

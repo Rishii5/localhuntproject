@@ -2,6 +2,8 @@ const User = require('../models/User');
 const Vendor = require('../models/Vendor');
 const Category = require('../models/Category');
 const Message = require('../models/Message');
+const Service = require('../models/Service');
+const Review = require('../models/Review');
 const { successResponse, errorResponse } = require('../utils/response');
 
 /**
@@ -98,23 +100,60 @@ const getVendorDashboard = async (user) => {
   .sort({ createdAt: -1 })
   .limit(10);
 
+  // Get services for vendor
+  const services = await Service.find({ vendor: businesses.length > 0 ? businesses[0]._id : null })
+    .sort({ createdAt: -1 });
+
+  // Get reviews for vendor
+  const reviews = await Review.find({ vendor: businesses.length > 0 ? businesses[0]._id : null })
+    .populate('customer', 'name')
+    .populate('service', 'name')
+    .sort({ createdAt: -1 })
+    .limit(10);
+
+  // Calculate average rating
+  const reviewStats = await Review.aggregate([
+    { $match: { vendor: businesses.length > 0 ? businesses[0]._id : null } },
+    {
+      $group: {
+        _id: null,
+        averageRating: { $avg: '$rating' },
+        totalReviews: { $sum: 1 }
+      }
+    }
+  ]);
+
+  const avgRating = reviewStats.length > 0 ? reviewStats[0].averageRating : 0;
+  const totalReviews = reviewStats.length > 0 ? reviewStats[0].totalReviews : 0;
+
   // Analytics - mock for now, in real app from orders/reviews
   const analytics = {
     totalViews: Math.floor(Math.random() * 1000) + 100,
     totalMessages: messages.length,
-    averageRating: 4.5,
+    averageRating: avgRating,
+    totalReviews: totalReviews,
     newLeads: Math.floor(Math.random() * 20) + 5
   };
 
+  // Get recent messages (last 5)
+  const recentMessages = messages.slice(0, 5).map(msg => ({
+    sender: msg.sender,
+    createdAt: msg.createdAt
+  }));
+
   return {
-    profile: {
-      name: user.name,
-      email: user.email,
-      businessesCount: businesses.length
+    vendor: businesses.length > 0 ? businesses[0] : undefined,
+    recentMessages,
+    services,
+    reviews,
+    stats: {
+      totalViews: analytics.totalViews,
+      totalMessages: analytics.totalMessages,
+      businessRating: avgRating,
+      totalReviews: totalReviews,
+      averageRating: avgRating
     },
-    businesses,
-    messages,
-    analytics
+    messages // optional full messages
   };
 };
 
