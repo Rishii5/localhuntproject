@@ -1,4 +1,3 @@
-si
 const express = require("express");
 const Vendor = require("../models/Vendor");
 const Review = require("../models/Review");
